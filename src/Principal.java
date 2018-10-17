@@ -48,6 +48,7 @@ public class Principal {
                     p.setOwnerUserId(rs.getInt("OwnerUserId"));
                     p.setAnswerCount(rs.getInt("AnswerCount"));
                     colecao.put(id, p);
+                    int i = 0;
                 } else { //é uma resposta
                     System.out.println("Aqui");
                     Resposta r = new Resposta();
