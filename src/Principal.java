@@ -172,20 +172,11 @@ public class Principal {
         Map<Integer, Pergunta> colecao = lerBase();
         filtrarBase(colecao);
         calcularPesos(colecao);
-        List<Item> grafo = gerarGrafo(colecao);
-        escreverArquivo(grafo);
-
-        /*Set<Item> grafo = new HashSet<>();
-         grafo.add(new Item(1,2,3));
-         grafo.add(new Item (1,2,4));
-         System.out.println(grafo.toString());*/
- /*int cont = 0, quantPerguntas = 0;
-        for (Map.Entry<Integer, Pergunta> p : colecao.entrySet()) {
-            quantPerguntas++;
-            if (p.getValue().getRespostas().size() == p.getValue().getAnswerCount()) {
-                cont++;
-            }
-        }
-        System.out.println("Tem todas respostas: " + cont + ", Quant perguntas: " + quantPerguntas);*/
+        List<Item> itens = gerarGrafo(colecao);
+     
+        Grafo grafo = PageRank.obtemVertices(itens);
+        PageRank.criaMatrizAdjacencia(itens, grafo);
+        PageRank.calculaPageRank(grafo, 0.85);
+        PageRank.imprimeTopKPageRank(grafo, 10);
     }
 }
