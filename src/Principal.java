@@ -13,7 +13,7 @@ import java.util.Map;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.text.ParseException;
 
 public class Principal {
 
@@ -92,7 +92,7 @@ public class Principal {
 
         } catch (SQLException e) {
             System.out.println("Error 1: " + e.getMessage());
-        } catch (Exception e) {
+        } catch (ParseException e) {
             System.out.println("Error 2: " + e.getMessage());
         }
         return colecao;
@@ -173,10 +173,22 @@ public class Principal {
         filtrarBase(colecao);
         calcularPesos(colecao);
         List<Item> itens = gerarGrafo(colecao);
-     
         Grafo grafo = PageRank.obtemVertices(itens);
         PageRank.criaMatrizAdjacencia(itens, grafo);
         PageRank.calculaPageRank(grafo, 0.85);
         PageRank.imprimeTopKPageRank(grafo, 10);
+        
+        
+       /* List<Item> itens = new ArrayList<>();
+        itens.add(new Item(1,3,1));
+        itens.add(new Item(1,2,1));
+        itens.add(new Item(2,3,1));
+        itens.add(new Item(3,1,1));
+        itens.add(new Item(3,2,1));
+        itens.add(new Item(4,2,1));
+        Grafo grafo = PageRank.obtemVertices(itens);
+        PageRank.criaMatrizAdjacencia(itens, grafo);
+        PageRank.calculaPageRank(grafo, 0.85); //MUDAR
+        PageRank.imprimeTopKPageRank(grafo, 20);*/
     }
 }

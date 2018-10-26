@@ -10,11 +10,11 @@ public class ComparadorScore implements Comparator {
 		Vertice objeto1 = (Vertice) obj1;
 		Vertice objeto2 = (Vertice) obj2;
 		if(objeto1.getScore() > objeto2.getScore()) {
-			retorno = 1;
+			retorno = -1;
 		} else if(objeto1.getScore() == objeto2.getScore()) {
 			retorno = 0;
 		} else {
-			retorno = -1;
+			retorno = 1;
 		}
 		return retorno;
 	}
