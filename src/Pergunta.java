@@ -10,8 +10,9 @@ public class Pergunta extends Post {
     
     ArrayList<Resposta> respostas;
     private Date dataAcceptedAnswerId; //eu criei para armazenar a data de criação da melhor resposta
+    
+    
     private int peso;
-
     public String getTitle() {
         return title;
     }

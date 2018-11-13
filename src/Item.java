@@ -9,8 +9,6 @@ public class Item {
         this.peso = peso;
     }
     
-    
-
     public int getOrigem() {
         return origem;
     }
