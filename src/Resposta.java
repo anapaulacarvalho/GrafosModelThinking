@@ -1,11 +1,6 @@
-
-import java.util.Date;
-
 public class Resposta extends Post {
     private int parentId;
-        
- 
-
+      
     public int getParentId() {
         return parentId;
     }

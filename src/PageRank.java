@@ -24,36 +24,30 @@ public class PageRank {
         Collections.sort(vertices, comparador);
         Grafo grafo = new Grafo(vertices.size());
         grafo.setVertices(vertices);
-
-        /*for(Vertice v: grafo.getVertices()){
-            System.out.println(v.getNome() + " "+ v.getScore());
-        }*/
         return grafo;
-
     }
 
+    //Cria matriz de adjacencia ORIGINAL
     public static void criaMatrizAdjacencia(List<Item> itens, Grafo grafo) {
         int posO, posD;
         List<Vertice> vertices = grafo.getVertices();
-
-        Vertice temp;
         for (Item item : itens) {
-            temp = new Vertice(item.getOrigem());
-            posO = vertices.indexOf(temp);
-            temp = new Vertice(item.getDestino());
-            posD = vertices.indexOf(temp);
+            posO = vertices.indexOf(new Vertice(item.getOrigem()));
+            posD = vertices.indexOf(new Vertice(item.getDestino()));
+            grafo.getMatrizAdj()[posO][posD] = 1;
+        }
+    }
 
+    //Cria matriz de adjacencia ORIGINAL
+    public static void criaMatrizAdjacenciaPesos(List<Item> itens, Grafo grafo) {
+        int posO, posD;
+        List<Vertice> vertices = grafo.getVertices();
+        for (Item item : itens) {
+            posO = vertices.indexOf(new Vertice(item.getOrigem()));
+            posD = vertices.indexOf(new Vertice(item.getDestino()));
             grafo.getMatrizAdj()[posO][posD] = item.getPeso();
             //grafo.getMatrizAdj()[posO][posD] = 1;
         }
-
-        /*for(int i = 0; i < grafo.getTamanho(); i++){
-            for(int j = 0; j < grafo.getTamanho(); j++){
-               
-                System.out.print(grafo.getMatrizAdj()[i][j]+" ");
-            } 
-            System.out.println("");
-        }*/
     }
 
     public static int[] getVetorOutdegree(Grafo grafo) {
@@ -88,6 +82,29 @@ public class PageRank {
         //System.out.println(vertice);
         for (i = 0; i < grafo.getTamanho(); i++) {
             if (grafo.getMatrizAdj()[i][vertice] > 0) { //existe aresta i --> vertice       
+                pageRank += (grafo.getMatrizAdj()[i][vertice] * pr.get(i)) / out_degree[i];//PageRank original
+            }
+        }
+
+        /*Multiplica a soma encontrada pelo dumping factor*/
+        pageRank = pageRank * dumpingFactor + (1 - dumpingFactor);
+
+        //System.out.println();
+        // System.out.printf("Page Rank vertice %d , soma: %f\n",vertice,pageRank);
+        return pageRank;
+    }
+
+    /*  Calcula a partir do grafo o page rank do vertice passado como parametro. Utilizando pesos nas arestas
+    Tambem sÃo parametros:
+    page_rank[u]: o PageRank (anterior) do vertice u.
+    out_degree[u]: o grau de saida do vertice u.
+    dumping_factor: dumping factor a ser usado. */
+    public static double calculaPageRankVerticePesos(Grafo grafo, List<Double> pr, int[] out_degree, int vertice, double dumpingFactor) {
+        int i, j;
+        double pageRank = 0;
+        //System.out.println(vertice);
+        for (i = 0; i < grafo.getTamanho(); i++) {
+            if (grafo.getMatrizAdj()[i][vertice] > 0) { //existe aresta i --> vertice       
                 double wij = 0;
                 for (j = 0; j < grafo.getTamanho(); j++) { //somatorio dos pesos (pega todos as saidas do vertice i)
                     if (grafo.getMatrizAdj()[i][j] > 0) {
@@ -95,8 +112,8 @@ public class PageRank {
                     }
                 }
                 /*Soma o pagerank de cada vertice e divide pelo somatorio dos pesos */
-                //pageRank += (grafo.getMatrizAdj()[i][vertice] * pr.get(i)) / wij;
-                pageRank += (grafo.getMatrizAdj()[i][vertice] * pr.get(i)) / out_degree[i];//PageRank original
+                pageRank += (grafo.getMatrizAdj()[i][vertice] * pr.get(i)) / wij; //PageRank com pesos
+                //pageRank += (grafo.getMatrizAdj()[i][vertice] * pr.get(i)) / out_degree[i];//PageRank original
             }
         }
 
@@ -160,14 +177,51 @@ public class PageRank {
 
     }
 
-    public static List<Integer> imprimeTopKPageRank(Grafo grafo, int k) {
+    public static void calculaPageRankPesos(Grafo grafo, double dumpingFactor) {
+        /* Funcao que ira calcular o Page Rank de todos os vertices
+    com a partir do CalculaPageRankVertice e ira normalizar os
+    resultados ate atingirem a condicao de parada somaDifPR <=0.1 */
+        List<Double> vetorPR = new ArrayList<>();
+        List<Double> vetorPR_atual = new ArrayList<>();
+
+        int[] outDegree = getVetorOutdegree(grafo);
+
+        for (int i = 0; i < grafo.getTamanho(); i++) {
+            vetorPR.add(1 - dumpingFactor); //inicializa
+            vetorPR_atual.add(0.0);
+        }
+
+        double somaDifPR = 0;
+        do {
+            for (int vertice = 0; vertice < grafo.getTamanho(); vertice++) { //para cada vertice associado a linha analisada..
+                vetorPR_atual.set(vertice, calculaPageRankVerticePesos(grafo, vetorPR, outDegree, vertice, dumpingFactor));
+                //System.out.println("Page"+calculaPageRankVertice(grafo, vetorPR, outDegree, vertice, dumpingFactor));
+            }
+            // System.out.println("");
+
+            vetorPR_atual = normalizaVetor(vetorPR_atual, grafo.getTamanho());
+
+            somaDifPR = 0;
+            for (int vertice = 0; vertice < grafo.getTamanho(); vertice++) {
+                somaDifPR += Math.abs(vetorPR_atual.get(vertice) - vetorPR.get(vertice));
+                vetorPR.set(vertice, vetorPR_atual.get(vertice));
+            }
+        } while (somaDifPR >= 0.001);
+
+        for (int i = 0; i < grafo.getTamanho(); i++) {
+            grafo.getVertices().get(i).setScore(vetorPR.get(i));
+        }
+
+    }
+
+    public static List<Integer> obterTopKPageRank(Grafo grafo, int k) {
         List<Integer> result = new ArrayList<>();
         int i;
         ComparadorScore comparador = new ComparadorScore();
         Collections.sort(grafo.getVertices(), comparador);
         for (i = 0; i < k && i < grafo.getTamanho(); i++) {
             result.add(grafo.getVertices().get(i).getNome());
-            System.out.printf("Posicao %d Vertice %d - Score: %.6f \n", (i + 1), grafo.getVertices().get(i).getNome(), grafo.getVertices().get(i).getScore());
+            //System.out.printf("Posicao %d Vertice %d - Score: %.6f \n", (i + 1), grafo.getVertices().get(i).getNome(), grafo.getVertices().get(i).getScore());
         }
         return result;
     }
