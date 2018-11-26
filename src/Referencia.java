@@ -10,13 +10,15 @@ import java.util.Map;
 public class Referencia {    
 
     public static List<Avaliacao> avaliar(List<Integer> rank, Map<Integer, Pergunta> colecao) {
-        int maxScoreTotal, minScoreTotal, maxScorePerg, OwnerIdMaxScorePerg = -1;
+        int maxScoreTotal, minScoreTotal, maxScorePerg, OwnerIdMaxScorePerg = -1, iguais = 0, diferentes = 0, idMaxScore = -1;
         List<Avaliacao> avaliacoes = new ArrayList<>(); 
         for (int i = 0; i < rank.size(); i++) {
             avaliacoes.add(new Avaliacao());
             avaliacoes.get(i).setOwnerId(rank.get(i));
             maxScoreTotal = Integer.MIN_VALUE;
             minScoreTotal = Integer.MAX_VALUE;
+            iguais = 0;
+            diferentes = 0;
             //percorre todas as perguntas
             for (Map.Entry<Integer, Pergunta> p : colecao.entrySet()) {
                 int idAcceptedAnswer = p.getValue().getAcceptedAnswerId(); //id da melhor resposta
@@ -27,6 +29,7 @@ public class Referencia {
                         avaliacoes.get(i).setQuantResp(avaliacoes.get(i).getQuantResp() + 1);
                         if (resposta.getId() == idAcceptedAnswer) { //é a melhor resposta                       
                             avaliacoes.get(i).setQuantMelhorResp(avaliacoes.get(i).getQuantMelhorResp() + 1);
+                             
                         }
 
                         if (resposta.getScore() > maxScoreTotal) {
@@ -39,6 +42,7 @@ public class Referencia {
                     if (maxScorePerg < resposta.getScore()) { //obtendo resposta com maior score
                         maxScorePerg = resposta.getScore();
                         OwnerIdMaxScorePerg = resposta.getOwnerUserId();
+                        idMaxScore = resposta.getId();
                     }
                 }
                 //System.out.println("Id: "+OwnerIdMaxScorePerg);
@@ -46,10 +50,21 @@ public class Referencia {
                     //System.out.println("Entrou");
                     avaliacoes.get(i).setQuantMaiorScore(avaliacoes.get(i).getQuantMaiorScore() + 1);
                 }
+                
+                //verificar se a melhor resposta teve o maior score
+                if(idMaxScore  == idAcceptedAnswer){
+                    iguais++;
+                }else{
+                    diferentes++;
+                }
+                
+                
                 avaliacoes.get(i).setMaiorScore(maxScoreTotal);
                 avaliacoes.get(i).setMenorScore(minScoreTotal);
             }
+            System.out.println("Melhor resposta igual a resposta com maiorScore:"+iguais +" "+diferentes);
         }
+        
         return avaliacoes;
     }
 

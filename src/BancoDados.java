@@ -34,7 +34,7 @@ public class BancoDados {
             con = DriverManager.getConnection(url, user, password);
             String qTags = "select Id, CreationDate, Score, Body, Tags, PostTypeId, ParentId, "
                     + "AcceptedAnswerId, OwnerUserId, AnswerCount, Title "
-                    + "from post1  where (PostTypeId = 1 and Tags like '%<.net>%') or PostTypeId = 2";
+                    + "from post1  where (PostTypeId = 1 and Tags like '%<javascript>%') or PostTypeId = 2";
             PreparedStatement stmt = con.prepareStatement(qTags);
 
             ResultSet rs = stmt.executeQuery();

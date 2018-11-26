@@ -106,7 +106,7 @@ public class PageRank {
         for (i = 0; i < grafo.getTamanho(); i++) {
             if (grafo.getMatrizAdj()[i][vertice] > 0) { //existe aresta i --> vertice       
                 double wij = 0;
-                for (j = 0; j < grafo.getTamanho(); j++) { //somatorio dos pesos (pega todos as saidas do vertice i)
+                for (j = 0; j < grafo.getTamanho(); j++) { //somatorio dos pesos (pega todas as saidas do vertice i)
                     if (grafo.getMatrizAdj()[i][j] > 0) {
                         wij += grafo.getMatrizAdj()[i][j];
                     }

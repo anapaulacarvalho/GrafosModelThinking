@@ -70,12 +70,35 @@ public class Principal {
             System.out.println("Error na escrita: " + e.getMessage());
         }
     }
+    
+    public static void escreverRanksArquivo(double[] rank, double[] referencia, int num) {
+        String rank1 = "x = [";
+        for (double i : rank) {
+            rank1+= i +";";
+        }
+        rank1+= "];\n";
+        
+        rank1+= "y = [";
+        for (double i : referencia) {
+            rank1+= i +";";
+        }
+        rank1+= "];";
+        
+        try {
+            Files.write(Paths.get("D:/DisciplinaUFMG/ModelThinking/Trabalho/Oficial/ranks"+num+".txt"), rank1.getBytes());
+           
+        } catch (IOException e) {
+            System.out.println("Error na escrita: " + e.getMessage());
+        }
+    }
 
     public static void imprimirAvaliacao(List<Avaliacao> avaliacoes) {
         avaliacoes.forEach((a) -> {
             System.out.println(a);
         });
     }
+    
+    
 
     //cria ordenação (vetor) com base nas posições dos usuários que estão no rank
     public static double[] converterListArray(List<Integer> rank, List<Avaliacao> referencia) {
@@ -117,7 +140,7 @@ public class Principal {
         List<Integer> rankOriginal = PageRank.obterTopKPageRank(grafoOriginal, tam);
         List<Avaliacao> avaliacoesOriginal = Referencia.avaliar(rankOriginal, colecao);
         //System.out.println("PageRank Original");
-        //imprimirAvaliacao(avaliacoesOriginal);
+        //imprimirAvaliacao(avaliacoesOriginal); na tela
 
         //PageRank com pesos
         Grafo grafoPesos = PageRank.obtemVertices(itens);
@@ -146,12 +169,16 @@ public class Principal {
         double[] rankR4 = converterListArray(rankPesos, rankReferencia4);
         KendallsCorrelation kt = new KendallsCorrelation();
         double valor = kt.correlation(arrayRank, rankR1);
+        escreverRanksArquivo(arrayRank, rankR1, 1);
         System.out.println("Valor: " + valor);
         valor = kt.correlation(arrayRank, rankR2);
+        escreverRanksArquivo(arrayRank, rankR2, 2);
         System.out.println("Valor: " + valor);
         valor = kt.correlation(arrayRank, rankR3);
+        escreverRanksArquivo(arrayRank, rankR3, 3);
         System.out.println("Valor: " + valor);
         valor = kt.correlation(arrayRank, rankR4);
+        escreverRanksArquivo(arrayRank, rankR4, 4);
         System.out.println("Valor: " + valor + "\n");
 
         //Comparação das referências com PageRank original
@@ -162,12 +189,16 @@ public class Principal {
         rankR3 = converterListArray(rankOriginal, rankReferencia3);
         rankR4 = converterListArray(rankOriginal, rankReferencia4);
         valor = kt.correlation(arrayRankOriginal, rankR1);
+        escreverRanksArquivo(arrayRankOriginal, rankR1, 5);
         System.out.println("Valor: " + valor);
         valor = kt.correlation(arrayRankOriginal, rankR2);
+        escreverRanksArquivo(arrayRankOriginal, rankR2, 6);
         System.out.println("Valor: " + valor);
         valor = kt.correlation(arrayRankOriginal, rankR3);
+        escreverRanksArquivo(arrayRankOriginal, rankR3, 7);
         System.out.println("Valor: " + valor);
         valor = kt.correlation(arrayRankOriginal, rankR4);
+        escreverRanksArquivo(arrayRankOriginal, rankR4, 8);
         System.out.println("Valor: " + valor);
 
     }
